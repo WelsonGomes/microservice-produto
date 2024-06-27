@@ -8,6 +8,7 @@ export interface ProdutoDTO {
 }
 
 export interface reqProdutoDTO {
+    id: number;
     nome: string;
     descricao: string;
     qtdade: number;
