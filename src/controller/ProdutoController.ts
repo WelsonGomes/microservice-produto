@@ -69,4 +69,42 @@ async function selectProduto(id: number): Promise<reqProdutoDTO[] | reqProdutoDT
     }
 };
 
-export { createProduto, deleteProduto, selectProduto }
+async function baixarEstoqueProduto(id: number, qtdaVenda: number, op: string) {
+    try {
+        const result = await prisma.$transaction(async (prismaTransaction) => {
+            const produto = await prismaTransaction.produto.findUnique({ where: { id: id } });
+            if (!produto) {
+                console.error(`Produto com ID ${id} não encontrado.`);
+                return { success: false, msg: 'Produto não encontrado' };
+            }
+            let novaQtd = 0;
+            if(op === 'soma'){
+                novaQtd = produto.qtdade + qtdaVenda;    
+            } else if(op === 'subtrair'){
+                novaQtd = produto.qtdade - qtdaVenda;
+            }
+
+            if (novaQtd < 0) {
+                console.error(`Quantidade insuficiente para venda. Estoque disponível: ${produto.qtdade}, Quantidade solicitada: ${qtdaVenda}`);
+                return { success: false, msg: 'Quantidade insuficiente' };
+            }
+        
+            await prismaTransaction.produto.update({
+                where: { id: id },
+                data: { qtdade: novaQtd }
+            });
+        
+            console.log(`Estoque do produto com ID ${id} atualizado com sucesso. Nova quantidade: ${novaQtd}`);
+            return { success: true, msg: 'Estoque atualizado', novoEstoque: novaQtd };
+        });
+    
+        return result;
+    } catch (error) {
+        console.error('Erro ao atualizar o estoque do produto:', error);
+        return { success: false, msg: 'Erro interno ao processar a solicitação' };
+    } finally {
+        await prisma.$disconnect();
+    }
+};
+
+export { createProduto, deleteProduto, selectProduto, baixarEstoqueProduto }
