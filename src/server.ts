@@ -31,16 +31,16 @@ app.get('/Produto', async (req: Request, res: Response) => {
 
 app.put('/Produto', async (req: Request, res: Response) => {
     try {
-        const id = parseInt(req.query.id as string);
-        const qtd = parseInt(req.query.qtd as string);
-        const op = req.query.operacao as string;
+        const id = parseInt(req.body.id as string);
+        const qtd = parseInt(req.body.qtd as string);
+        const op = req.body.op as string;
 
         if (isNaN(id) || isNaN(qtd)) {
         return res.status(400).json({ success: false, msg: 'Parâmetros inválidos' });
         }
   
         const response = await baixarEstoqueProduto(id, qtd, op);
-        console.log('Estoque baixado API');
+        console.log('Estoque Atualizado API');
       
         if (response.success) {
             return res.status(200).json(response);

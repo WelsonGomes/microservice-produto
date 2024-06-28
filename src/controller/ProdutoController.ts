@@ -77,12 +77,23 @@ async function baixarEstoqueProduto(id: number, qtdaVenda: number, op: string) {
                 console.error(`Produto com ID ${id} não encontrado.`);
                 return { success: false, msg: 'Produto não encontrado' };
             }
+            console.log(`Produto encontrado: ${JSON.stringify(produto)}`);
+            console.log(`Quantidade atual do produto: ${produto.qtdade}`);
+            console.log(`Quantidade da venda: ${qtdaVenda}`);
+            console.log(`Operação: ${op}`);
+
             let novaQtd = 0;
-            if(op === 'soma'){
-                novaQtd = produto.qtdade + qtdaVenda;    
-            } else if(op === 'subtrair'){
+
+            if (op === 'soma') {
+                novaQtd = produto.qtdade + qtdaVenda;
+            } else if (op === 'subtrair') {
                 novaQtd = produto.qtdade - qtdaVenda;
+            } else {
+                console.error(`Operação inválida: ${op}`);
+                return { success: false, msg: 'Operação inválida' };
             }
+
+            console.log(`Nova quantidade calculada: ${novaQtd}`);
 
             if (novaQtd < 0) {
                 console.error(`Quantidade insuficiente para venda. Estoque disponível: ${produto.qtdade}, Quantidade solicitada: ${qtdaVenda}`);
