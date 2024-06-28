@@ -11,22 +11,34 @@ app.use(express.json());
 const port = process.env.SERVICE_PORT;
 
 app.post('/Produto', async (req: Request, res: Response) => {
-    console.log(req.body);
-    const produto = req.body;
-    const response = await createProduto(produto);
+    try{
+        console.log(req.body);
+        const produto = req.body;
+        const response = await createProduto(produto);
     return res.status(response.status).json({msg:response.msg});
+    } catch (error){
+        return res.status(500).json({msg: 'Houve um erro no servidor.'});
+    }
 });
 
 app.delete('/Produto', async (req: Request, res: Response) => {
-    const id = req.query.id as string;
-    const response = await deleteProduto(parseInt(id));
-    return res.status(response.status).json({msg:response.msg});
+    try{
+        const id = req.query.id as string;
+        const response = await deleteProduto(parseInt(id));
+        return res.status(response.status).json({msg:response.msg});
+    } catch (error){
+        return res.status(500).json({msg: 'Houve um erro no servidor.'});
+    }
 });
 
 app.get('/Produto', async (req: Request, res: Response) => {
-    const id = req.query.id as string;
-    const response = await selectProduto(parseInt(id));
-    return res.status(200).json(response);
+    try{
+        const id = req.query.id as string;
+        const response = await selectProduto(parseInt(id));
+        return res.status(200).json(response);
+    } catch (error){
+        return res.status(500).json({msg: 'Houve um erro no servidor.'});
+    }
 });
 
 app.put('/Produto', async (req: Request, res: Response) => {
